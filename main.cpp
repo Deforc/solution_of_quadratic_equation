@@ -7,47 +7,52 @@
 using namespace std;
 
 
-float a, b, c;
-const string strInput = R"(C:\Users\79823\CLionProjects\YP_1\infile.txt)";
-const string strOutput = R"(C:\Users\79823\CLionProjects\YP_1\outfile.txt)";
+const string strInput = "..\\infile.txt";
+const string strOutput = "..\\outfile.txt";
 
 
-void ReadFile(string str)
+array<float, 3> ReadFile(const string& str)
 {
+    array<float, 3> coef{0,0, 0};
     ifstream fin (str);
-    fin >> a >> b >> c;
+    for(auto &i : coef)
+        fin >> i;
+    fin.close();
+    return coef;
+
 }
 
 
-vector<float> RootFinder (float a, float b, float c)
+vector<float> RootFinder (const array<float, 3>& coefs)
 {
         vector<float> roots;
 
-        float discriminant = b*b - 4*a*c;
+        float discriminant = coefs[1]*coefs[1] - 4*coefs[0]*coefs[2];
         if (discriminant >= 0)
         {
-            roots.push_back((- b + sqrt(discriminant)) / (2 * a));
-            if (((- b - sqrt(discriminant))/(2 * a)) != (- b + sqrt(discriminant) )/ (2 * a))
-                roots.push_back((- b - sqrt(discriminant) )/ (2 * a));
+            roots.push_back((- coefs[1] + sqrt(discriminant)) / (2 * coefs[0]));
+            if (((- coefs[1] - sqrt(discriminant))/(2 * coefs[0])) != (- coefs[1] + sqrt(discriminant) )/ (2 * coefs[0]))
+                roots.push_back((- coefs[1] - sqrt(discriminant) )/ (2 * coefs[0]));
         }
 
         return roots;
 
 }
 
-void WriteFile(string str, vector<float> roots)
+void WriteFile(const string& str, const vector<float>& roots)
 {
     ofstream fout (str);
-    if (roots.size() != 0)
-        for (auto i : roots)
-            fout << roots[i] << " ";
-        else fout << "Roots aren`t real!";
+    if (!roots.empty())
+        for (auto &i : roots)
+            fout << i << " ";
+    else fout << "Roots aren`t real!";
+    fout.close();
 }
 
 
 int main() {
-    ReadFile(strInput);
-    vector<float> roots = RootFinder(a, b, c);
+    array<float, 3> coefs = ReadFile(strInput);
+    vector<float> roots = RootFinder(coefs);
     WriteFile(strOutput, roots);
 
 }
